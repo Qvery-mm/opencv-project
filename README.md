@@ -21,7 +21,7 @@ Clone this repository
 git clone git@github.com:Qvery-mm/opencv-project.git
 ```
 ### Step 4
-Build
+Build source
 ```
 cd opencv-project/source
 cmake
