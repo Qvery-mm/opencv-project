@@ -1,8 +1,7 @@
-#include "stdafx.h"
-#include <cv.h>
-#include <highgui.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include <cstdlib>
+#include <cstdio>
 #include <vector>
 #include <iostream>
 #include <algorithm>
@@ -13,7 +12,7 @@
 using namespace cv;
 using namespace std;
 
-void init(Mat original, Mat maske, string id);
+void init(Mat original, Mat _mask, string id);
 Mat Result(Mat first, int counter, int fa);
 int pendulum();
 int friction();

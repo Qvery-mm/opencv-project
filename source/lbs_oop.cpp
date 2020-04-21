@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "head.h"
+
 #define ORIGINAL true
 #define MASK false
 
@@ -16,7 +16,8 @@ struct hist
 	string name;
 	hist()
 	{
-		for(int i = 0; i < 256; i++) values[i] = 0;
+		for(int i = 0; i < 256; i++)
+		    values[i] = 0;
 		coof = 1e9;
 	}
 };
@@ -24,7 +25,7 @@ struct hist
 int mask_hist[256] = {};
 hist **image_hists;
 vector <hist> result;
-int quad_size = 48; //по умолчанию
+int quad_size = 48; // default
 int imax, jmax;
 pair <double, double> center_now;
 
@@ -37,7 +38,7 @@ struct images
 	unsigned char* new_data;
 	bool cr_mode;
 
-	images(Mat a, bool mode) //if mode == true that will be image mode else mask mode
+	images(Mat& a, bool mode) //if mode == true that will be image mode else mask mode
 	{
 		Image = a;
 		lenght = a.cols;
@@ -65,8 +66,7 @@ quad_size = (lenght-2)/2;
 
 	int find_data(int x, int y, int width)
 	{
-		int resulte = (y-1)*width + x-1;
-		return resulte;
+		return (y-1)*width + x-1;
 	}
 
 	void bin(bool mode) //if mode == true that will be image mode else mask mode
@@ -111,7 +111,7 @@ bool mat_less (const hist & m1, const hist & m2)
 	return (m1.coof < m2.coof);
 }
 
-void choose(string id)  //номер маски 0 - n
+void choose(string id)  //mask number from 0 to n
 {
 	hist res;
 	int r;
@@ -137,14 +137,15 @@ void choose(string id)  //номер маски 0 - n
 	}
 }
 
-void init(Mat original, Mat maske, string id)
+void init(Mat original, Mat _mask, string id)
 {
-	images mask(maske, MASK);
+	images mask(_mask, MASK);
 	images first(original, ORIGINAL);
 	choose(id);
 	imax = 0;
 	jmax = 0;
-	for(int i = 0; i < 256; i++) mask_hist[i] = 0;
+	for(int i = 0; i < 256; i++)
+	    mask_hist[i] = 0;
 
 }
 Mat Result(Mat first, int counter, int coef)
@@ -152,7 +153,6 @@ Mat Result(Mat first, int counter, int coef)
 	sort(result.begin(), result.end(), mat_less);
 	for(int i = 0; i < counter; i++)
 	{
-		/* uncomment next string to see coefficient*/
 		//cout<<result[i].coof<<endl;  
 		if(result[i].coof < coef) 
 		{

@@ -1,23 +1,22 @@
-#include "stdafx.h"
 #include "head.h"
 
-/*globals */
+/** globals */
 		VideoCapture capture(0);
 		Mat3b canvas;
 		const double FONT_SIZE = 0.7;
-		string winName = "My cool GUI v0.1";
+		string winName = "GUI v0.1";
 		vector <pair <int, int> > points;
-		/* description */
-		/* 0 = esc, 1 = mode_pendulum, 2 = mode_rolling, 3 = set_mask, 4 = Start!!!*/
+		/** description
+		* 0 = esc, 1 = mode_pendulum, 2 = mode_rolling, 3 = set_mask, 4 = Start!
+		*/
 		const int N_buttons = 5;
 		Rect buttons[N_buttons];
 		string buttons_names[N_buttons] = {"esc", "pendulum", "rolling", "mask", "select points"};
-		string arr[2] = {"click at the left upper conner of mask\n", "click at the right bottom conner of mask\n" };
 		Mat choose_mask();
 		void select_points();
 		Mat mask;
 		string state = "work";
-/*end of globals */
+
 
 
 void CallBackFunc(int event, int x, int y, int flags, void* userdata)
@@ -25,7 +24,7 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 
 	if( event == EVENT_LBUTTONDOWN)
 	{
-		points.push_back(make_pair(x, y));
+		points.emplace_back(x, y);
 		printf(".");
 	}
 }
@@ -57,19 +56,19 @@ void callBackFunc(int event, int x, int y, int flags, void* userdata)
 
 Mat choose_mask()
 {
-	printf("%s", arr[0]);
+	printf("click at the left upper conner and then right lower conner of the desired mask\n");
 	Mat result, frame, mm;
 	while( points.size() < 2)
 	{
 		capture.retrieve(frame);
 		imshow("result", frame);
 		waitKey(1);
-		cvtColor(frame, mm, CV_RGB2GRAY);
-		setMouseCallback("result", CallBackFunc, NULL);
+		cvtColor(frame, mm, COLOR_RGB2GRAY);
+		setMouseCallback("result", CallBackFunc, nullptr);
 	}
 	result = mm(Rect(points[0].first, points[0].second, points[1].first- points[0].first, points[1].second - points[0].second));
 	imwrite("saved_photo/mask.png", result);
-	mask = imread("saved_photo/mask.png", CV_LOAD_IMAGE_GRAYSCALE);
+	mask = imread("saved_photo/mask.png", IMREAD_GRAYSCALE);
 	printf("mask has been set!");
 	points.clear();
 	return result;
@@ -87,7 +86,7 @@ void select_points()
 	{
 		capture.retrieve(frame);
 		imshow("result", frame);
-		setMouseCallback("result", CallBackFunc, NULL);
+		setMouseCallback("result", CallBackFunc, nullptr);
 		waitKey(1);
 	}
 	printf("all points selected!!!\n");
@@ -109,27 +108,27 @@ int main()
 		canvas(buttons[i]) = Vec3b(200,200,200);
 		putText(canvas(buttons[i]), buttons_names[i], Point(0, button_height/2), FONT_HERSHEY_TRIPLEX, FONT_SIZE, Scalar(0,0,0));
 	}
-	/*capture initialising*/
+	/*capture init*/
  
-    capture.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH);
-    capture.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT);
-	//cvCreateTrackbar("brightness", "result", &a ,255, NULL);
+    capture.set(CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH);
+    capture.set(CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT);
+	//createTrackbar("brightness", "result", &a ,255, NULL);
 
-	mask = imread("saved_photo/mask.png", CV_LOAD_IMAGE_GRAYSCALE);
+	mask = imread("saved_photo/mask.png", IMREAD_GRAYSCALE);
 
 	int coef = 30;
-	cvCreateTrackbar("coef", "My cool GUI v0.1", &coef ,255, NULL);	
-	while(state!= "end")
+	createTrackbar("coef", winName, &coef ,255, nullptr);
+	while(state != "end")
 	{
 		capture.retrieve(frame);
-		cvtColor(frame, mm, CV_RGB2GRAY);
-		init(mm, mask, "found!!!");
+		cvtColor(frame, mm, COLOR_RGB2GRAY);
+		init(mm, mask, "found!");
 		img = Result(frame, 1, coef);
 		if(state == "pendulum")
 			pendulum();
 		if(state == "friction")
 			friction();
-        imshow("result", img); //1 цифра - это кол-во объектов 2 - коэфициент похожести
+        imshow("result", img);
 		setMouseCallback(winName, callBackFunc);
 	    imshow(winName, canvas);
 		waitKey(1);
